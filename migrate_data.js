@@ -188,10 +188,22 @@ module.exports = function (complete) {
             columns_string +
             ') VALUES (' +
             insert_values_string +
-            ')'
+            ')' + ' RETURNING *'
         // create $1, $2, $3 etc. for PG Update Statement
         pgUpdateStatement = pgUpdateQuery(columns)
         cb()
+    }
+
+    const productInsert = () =>  {
+        return 'INSERT into products (name) VALUES ($1) RETURNING *'
+    }
+
+    const productSelect = () =>  {
+        return 'SELECT * FROM products WHERE name = $1'
+    }
+
+    const productRInsert = () =>  {
+        return 'INSERT into accouts_products (product_id, account_id) VALUES ($1, $2) RETURNING *'
     }
 
     // Extraction of currently existing data in Postgres
@@ -314,25 +326,45 @@ module.exports = function (complete) {
                 for (let md in mongo_data) {
                     try {
                         let data_row = mongo_data[md]
-                        console.log(md)
+                        // console.log(md)
 
                         var insert_row = []
                         for (let j = 0; j < columns.length; j++) {
                             // custom rules applied in this switch statement if needed, otherwise default will be used
                             // -------------------------------------------------------
+                            // console.log('-------------------------------------------------------')
+                            // console.log(data_row);
+                            // console.log('-------------------------------------------------------')
                             switch (columns[j]) {
                                 // custom rule for extracting value from child level i.e. 'common' that is stored in the 'name' object
-                                case 'common_name':
+                                case 'products':
                                     insert_row.push(
                                         json_key(data_row.name, 'common', j)
                                     )
                                     break
                                 default:
+                                    // console.log('-------------------------------------------------------')
+                                    // console.log(insert_row);
+                                    // console.log(columns[j])
+                                    // console.log('-------------------------------------------------------')
                                     insert_row.push(
-                                        json_key(data_row, columns[j], j)
+                                        json_key(data_row, columns[j].replace(/"/g, ''), j)
                                     )
                             }
                             // -------------------------------------------------------
+                        }
+                        const { products } = data_row;
+                        if ( products ) {
+                            //console.log(data_row.products)
+                            for (let index = 0; index < products.length; index++) {
+                                const element = products[index];
+                                const data = await PostgresConnection().query(productSelect(), [element])
+                                // console.log(data)
+                                if (!data.rows[0]) {
+                                    const r = await PostgresConnection().query(productInsert(), [element])
+                                    // console.log(r)
+                                }
+                            }
                         }
                     } catch (e) {
                         console.log(e)
@@ -350,9 +382,11 @@ module.exports = function (complete) {
                     try {
                         let values = rows[r]
                         if ( (queryType == 'new_data' && created_at_flag) || queryType == 'all_data') {
-                            await PostgresConnection().query(pgInsertStatement, values)
+                            const data = await PostgresConnection().query(pgInsertStatement, values)
+                            // console.log(data.rows[0]._id)
                         } else if (queryType == 'existing_data' && updated_at_flag) {
-                            await PostgresConnection().query(pgUpdateStatement, values)
+                            const data = await PostgresConnection().query(pgUpdateStatement, values)
+                            // console.log(data.rows)
                         } else {
                             console.log('No query type')
                         }

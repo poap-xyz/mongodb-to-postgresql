@@ -26,8 +26,9 @@ module.exports = async function (complete) {
         let check_text =
             "SELECT table_name, column_name, is_nullable, udt_name, character_maximum_length FROM information_schema.columns WHERE table_name = '" +
             table_name +
-            "'"
-        let res = await PostgresConnection().query(check_text)
+            "'";
+        const pg = await PostgresConnection().connect();
+        let res = await pg.query(check_text)
         model_comparison = []
         // if table exists, create array to compare with existing table
         if (res.rows.length !== 0) {

@@ -6,35 +6,41 @@
 */
 
 module.exports.all_models = {
-    mongo_dummy_data_books_model: [
-        'mongo_dummy_data_books', // first item is always table / collection name
-        '_id VARCHAR(50) PRIMARY KEY NOT NULL', // second item is primary key field
-        'title TEXT',
-        'isbn VARCHAR(100)',
-        'pageCount INT4',
-        'created_at TIMESTAMPTZ',
-        'thumbnailUrl VARCHAR(200)',
-        'shortDescription TEXT',
-        'longDescription TEXT',
-        'status VARCHAR(50)',
-        'authors _TEXT', // array - _ before field type
-        'categories _TEXT',
-    ],
-    mongo_dummy_data_countries_model: [
-        'mongo_dummy_data_countries',
-        '_id VARCHAR(50) PRIMARY KEY NOT NULL',
-        'altSpellings _TEXT',
-        'area NUMERIC',
-        'borders _TEXT',
-        'callingCode _TEXT',
-        'capital VARCHAR(100)',
-        'languages JSONB', // JSONB
-        'common_name VARCHAR(100)', // Custom field - see  migrate_data.js for details
-    ],
+    // mongo_dummy_data_books_model: [
+    //     'mongo_dummy_data_books', // first item is always table / collection name
+    //     '_id VARCHAR(50) PRIMARY KEY NOT NULL', // second item is primary key field
+    //     'title TEXT',
+    //     'isbn VARCHAR(100)',
+    //     'pageCount INT4',
+    //     'created_at TIMESTAMPTZ',
+    //     'thumbnailUrl VARCHAR(200)',
+    //     'shortDescription TEXT',
+    //     'longDescription TEXT',
+    //     'status VARCHAR(50)',
+    //     'authors _TEXT', // array - _ before field type
+    //     'categories _TEXT',
+    // ],
+    // mongo_dummy_data_countries_model: [
+    //     'mongo_dummy_data_countries',
+    //     '_id VARCHAR(50) PRIMARY KEY NOT NULL',
+    //     'altSpellings _TEXT',
+    //     'area NUMERIC',
+    //     'borders _TEXT',
+    //     'callingCode _TEXT',
+    //     'capital VARCHAR(100)',
+    //     'languages JSONB', // JSONB
+    //     'common_name VARCHAR(100)', // Custom field - see  migrate_data.js for details
+    // ],
+    // mongo_dummy_data_profiles_model: [
+    //     'mongo_dummy_data_profiles',
+    //     '_id VARCHAR(50) PRIMARY KEY NOT NULL',
+    //     'client TEXT',
+    //     'updated_at TIMESTAMPTZ', //updated_at and created_at fields can be used to auto update data dynamically
+    // ],
     mongo_dummy_data_profiles_model: [
-        'mongo_dummy_data_profiles',
+        'accounts',
         '_id VARCHAR(50) PRIMARY KEY NOT NULL',
-        'client TEXT',
-        'updated_at TIMESTAMPTZ', //updated_at and created_at fields can be used to auto update data dynamically
-    ],    
+        'account_id INT',
+        '"limit" INT',
+    ],
 }
